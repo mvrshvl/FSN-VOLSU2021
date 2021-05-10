@@ -1,0 +1,29 @@
+[Unit]
+Description=File system notifier
+After=network.target
+
+[Service]
+Type=simple
+User=fsn
+Group=fsn
+LimitNOFILE=1024
+
+Restart=on-failure
+RestartSec=10
+startLimitIntervalSec=60
+
+WorkingDirectory=/etc/fsnotifier
+ExecStart=/usr/local/bin/fsnservice
+
+# make sure log directory exists and owned by syslog
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /etc/fsnotifier
+ExecStartPre=/bin/chmod 777 /etc/fsnotifier
+ExecStartPre=/bin/mkdir -p /etc/fsnotifier/log
+ExecStartPre=/bin/chmod 777 /etc/fsnotifier/log
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=fsn
+
+[Install]
+WantedBy=multi-user.target
